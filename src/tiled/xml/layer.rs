@@ -560,6 +560,12 @@ impl<'de> Deserialize<'de> for TiledObjectInstance {
                             shape = Some(ObjectShape::Ellipse);
                         }
                         "polygon" => shape = Some(ObjectShape::Polygon(map.next_value()?)),
+                        "point" => {
+                            shape = {
+                                map.next_value::<IgnoredAny>()?;
+                                Some(ObjectShape::Point)
+                            }
+                        }
                         _ => panic!("Unknown key for TiledObjectInstance: {}", key),
                     }
                 }
@@ -619,6 +625,7 @@ impl TiledObjectInstance {
                     None,
                 )
             }
+            ObjectShape::Point => Collider::circle(0.0),
             ObjectShape::Rect => Collider::rectangle(self.width, self.height),
         });
     }
@@ -629,6 +636,7 @@ impl TiledObjectInstance {
 pub enum ObjectShape {
     Ellipse,
     Polygon(Polygon),
+    Point,
     #[default]
     Rect,
 }
