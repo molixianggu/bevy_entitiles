@@ -171,8 +171,10 @@ impl FromWorld for TilemapBindGroupLayouts {
         let tilemap_storage_layout = render_device.create_bind_group_layout(
             "tilemap_storage_layout",
             &BindGroupLayoutEntries::single(
-                // ShaderStages::VERTEX,
-                ShaderStages::VERTEX_FRAGMENT,
+                #[cfg(not(target_arch = "wasm32"))]
+                ShaderStages::VERTEX,
+                #[cfg(target_arch = "wasm32")]
+                ShaderStages::FRAGMENT,
                 binding::storage_buffer_read_only::<i32>(false),
             ),
         );
